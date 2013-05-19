@@ -20,8 +20,20 @@ def make_request(word):
 
 # Parse the HTML and get the synonyms
 def get_syn(html):
-   syn_regex = re.compile('<td valign="top">Synonyms:</td>\n<td><span>')
-  syns = syn_regex.search(html)
+   html  = html.split("\n") #split the string by line to make it easier to slice down
+   start = html.index("<td valign=\"top\">Synonyms:</td>")
+   html  = html[start:]
+   end   = html.index("</span></td>")
+   html  = html[:end]
+   html  = "\n".join(html)
+
+   linked_words = re.compile(("<a.*>(.*)</a>")) #get the linked words that start each line
+   words = linked_words.findall(html)
+   other_words_regex = re.compile(",\s([\sa-z]+),?", re.IGNORECASE)
+   other_words  = other_words_regex.findall(html)
+
+   return words + other_words
+
 
 
 
@@ -33,4 +45,4 @@ def main():
    pass
 
 if __name__ == '__main__':
-   print make_request('enter')
+   print get_syn(make_request('enter'))
