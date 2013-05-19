@@ -1,6 +1,9 @@
 #!/usr/bin/env python
+# Python 2.7.3
+
 # Provide a CLI interface to http://thesaurus.com/
 # git@github.com:OrangeCrush/I-Love-Phonics.git
+# Max Friederichs
 
 import re
 import urllib
@@ -19,20 +22,31 @@ def make_request(word):
 
 # Parse the HTML and get the synonyms
 def get_syn(html):
-   html  = html.split("\n")
-   start = html.index("<td valign=\"top\">Synonyms:</td>")
-   html  = html[start:]
-   end   = html.index("</span></td>")
-   html  = html[:end]
-   html  = html[2:]
-   html  = "\n".join(html)
+   rval = []
+   if !not_found(html):
+      html  = html.split("\n")
+      start = html.index("<td valign=\"top\">Synonyms:</td>")
+      html  = html[start:]
+      end   = html.index("</span></td>")
+      html  = html[:end]
+      html  = html[2:]
+      html  = "\n".join(html)
 
-   linked_words = re.compile(("<a.*>(.*)</a>")) #get the linked words that start each line
-   words = linked_words.findall(html)
-   other_words_regex = re.compile(",\s([\sa-z]+),", re.IGNORECASE)
-   other_words  = other_words_regex.findall(html)
+      linked_words = re.compile(("<a.*>(.*)</a>"))
+      words = linked_words.findall(html)
+      other_words_regex = re.compile("(?:\s*([\sa-z]+),)|(?:,\s([\sa-z]+))", re.IGNORECASE)
+      other_words  = other_words_regex.findall(html)
 
-   return words + other_words
+      other_words = map(lambda x: x[1] if (x[0] == '') else x[0], other_words)
+      rval = words + other_words
+   else:
+      rval = ['NOT FOUND']
+   return rval
+
+# Print the suggestions if the word was not found
+def not_found(html):
+   not_found_regex = re.compile("No results found for")
+
 
 # Parse the HTML and get the definition
 def get_def(html):
