@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 # Provide a CLI interface to http://thesaurus.com/
 # git@github.com:OrangeCrush/I-Love-Phonics.git
 
@@ -20,22 +19,20 @@ def make_request(word):
 
 # Parse the HTML and get the synonyms
 def get_syn(html):
-   html  = html.split("\n") #split the string by line to make it easier to slice down
+   html  = html.split("\n")
    start = html.index("<td valign=\"top\">Synonyms:</td>")
    html  = html[start:]
    end   = html.index("</span></td>")
    html  = html[:end]
+   html  = html[2:]
    html  = "\n".join(html)
 
    linked_words = re.compile(("<a.*>(.*)</a>")) #get the linked words that start each line
    words = linked_words.findall(html)
-   other_words_regex = re.compile(",\s([\sa-z]+),?", re.IGNORECASE)
+   other_words_regex = re.compile(",\s([\sa-z]+),", re.IGNORECASE)
    other_words  = other_words_regex.findall(html)
 
    return words + other_words
-
-
-
 
 # Parse the HTML and get the definition
 def get_def(html):
