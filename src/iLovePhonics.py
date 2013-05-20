@@ -59,14 +59,26 @@ def not_found_or_suggestions(html, word):
 def get_def(html):
    pass
 
-def main():
-   html = make_request(sys.argv[1])
-   result = not_found_or_suggestions(html, sys.argv[1])
-   if result != []:
-      print result[0]
-   else:
-      print get_syn(html)
+def column_print(lst):
+   if len(lst) % 2 != 0:
+      lst.append(" ")
+   split = len(lst) / 2
+   left  = lst[:split]
+   right = lst[split:]
+   for key,val in zip(left,right):
+      print "{0:<20s} {1}".format(key, val)
 
+def main():
+   if len(sys.argv) == 2:
+      html = make_request(sys.argv[1])
+      result = not_found_or_suggestions(html, sys.argv[1])
+      if result != []:
+         print result[0]
+      else:
+         print "Synonyms for {0}-".format(sys.argv[1])
+         column_print(get_syn(html))
+   else:
+      print "Usage : iLovePhonics <word>"
 
 if __name__ == '__main__':
    main()
