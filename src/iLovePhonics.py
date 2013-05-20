@@ -33,7 +33,7 @@ def get_syn(html):
 
    linked_words = re.compile(("<a.*>(.*)</a>"))
    words = linked_words.findall(html)
-   other_words_regex = re.compile("(?:\s*([\sa-z]+),)|(?:,\s([\sa-z]+))", re.IGNORECASE)
+   other_words_regex = re.compile("(?:\s*([\sa-z'-]+),)|(?:,\s([\sa-z'-]+))", re.IGNORECASE)
    other_words  = other_words_regex.findall(html)
 
    other_words = map(lambda x: x[1] if (x[0] == '') else x[0], other_words)
@@ -57,7 +57,11 @@ def not_found_or_suggestions(html, word):
 
 # Parse the HTML and get the definition
 def get_def(html):
-   pass
+   html = html.split("\n")
+   start = html.index('<td valign="top">Definition:</td>')
+   html = html[start:start + 4]
+   definition_regex = re.compile('<td>(.*)</td>')
+   return definition_regex.findall("\n".join(html))[0]
 
 def column_print(lst):
    if len(lst) % 2 != 0:
@@ -71,6 +75,8 @@ def column_print(lst):
 def main():
    if len(sys.argv) == 2:
       html = make_request(sys.argv[1])
+      print "Definition for {0}".format(sys.argv[1])
+      print get_def(html) + "\n"
       result = not_found_or_suggestions(html, sys.argv[1])
       if result != []:
          print result[0]
