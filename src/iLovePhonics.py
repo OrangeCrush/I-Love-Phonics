@@ -8,6 +8,7 @@
 import re
 import urllib
 import urllib2
+import sys
 
 # Make a request to http://thesaurus.com/
 # and return the result in html.
@@ -22,38 +23,50 @@ def make_request(word):
 
 # Parse the HTML and get the synonyms
 def get_syn(html):
-   rval = []
-   if !not_found(html):
-      html  = html.split("\n")
-      start = html.index("<td valign=\"top\">Synonyms:</td>")
-      html  = html[start:]
-      end   = html.index("</span></td>")
-      html  = html[:end]
-      html  = html[2:]
-      html  = "\n".join(html)
+   html  = html.split("\n")
+   start = html.index("<td valign=\"top\">Synonyms:</td>")
+   html  = html[start:]
+   end   = html.index("</span></td>")
+   html  = html[:end]
+   html  = html[2:]
+   html  = "\n".join(html)
 
-      linked_words = re.compile(("<a.*>(.*)</a>"))
-      words = linked_words.findall(html)
-      other_words_regex = re.compile("(?:\s*([\sa-z]+),)|(?:,\s([\sa-z]+))", re.IGNORECASE)
-      other_words  = other_words_regex.findall(html)
+   linked_words = re.compile(("<a.*>(.*)</a>"))
+   words = linked_words.findall(html)
+   other_words_regex = re.compile("(?:\s*([\sa-z]+),)|(?:,\s([\sa-z]+))", re.IGNORECASE)
+   other_words  = other_words_regex.findall(html)
 
-      other_words = map(lambda x: x[1] if (x[0] == '') else x[0], other_words)
-      rval = words + other_words
-   else:
-      rval = ['NOT FOUND']
+   other_words = map(lambda x: x[1] if (x[0] == '') else x[0], other_words)
+   rval = words + other_words
    return rval
 
-# Print the suggestions if the word was not found
-def not_found(html):
-   not_found_regex = re.compile("No results found for")
-
+# Returns if there are no suggestions
+# and the word was not found.
+def not_found_or_suggestions(html, word):
+   rval = []
+   no_sug = re.compile('Please\stry\sspelling\sthe\sword\sdifferently')
+   no_sugs = no_sug.findall(html)
+   if no_sugs == []:
+      search = re.compile('<span\sclass="dyme">Did\syou\smean.*>(.*)</a></span>',re.DOTALL)
+      words = search.findall(html)
+      if words != []:
+         rval = ['Did you mean {0}?'.format(words[0]), words[0]]
+   else:
+      rval = ['No Suggestions available, please try another spelling.']
+   return rval
 
 # Parse the HTML and get the definition
 def get_def(html):
    pass
 
 def main():
-   pass
+   html = make_request(sys.argv[1])
+   result = not_found_or_suggestions(html, sys.argv[1])
+   if result != []:
+      print result[0]
+   else:
+      print get_syn(html)
+
 
 if __name__ == '__main__':
-   print get_syn(make_request('enter'))
+   main()
