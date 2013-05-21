@@ -75,12 +75,12 @@ def column_print(lst):
 def main():
    if len(sys.argv) == 2:
       html = make_request(sys.argv[1])
-      print "Definition for {0}".format(sys.argv[1])
-      print get_def(html) + "\n"
       result = not_found_or_suggestions(html, sys.argv[1])
       if result != []:
          print result[0]
       else:
+         print "Definition for {0}".format(sys.argv[1])
+         print get_def(html) + "\n"
          print "Synonyms for {0}-".format(sys.argv[1])
          column_print(get_syn(html))
    else:
