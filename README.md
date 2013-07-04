@@ -8,7 +8,7 @@
 
 <h3 id="toc_1.1.1">Installation</h3>
 <pre>
-git clone git@github.com:OrangeCrush/I-Love-Phonics.git
+git clone https://github.com/OrangeCrush/I-Love-Phonics.git
 cd I-Love-Phonics
 sudo ./install.sh
 </pre>
