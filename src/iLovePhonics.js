@@ -2,22 +2,36 @@
 
 var request = require('request');
 var jsdom   = require('jsdom');
-var jquery  = require('jquery');
+var fs      = require('fs');
+var jquery  = fs.readFileSync('./jquery.js', 'utf-8');
 
+var dictHttpStr   = 'http://dictionary.reference.com/browse/';
+var dictSearchStr = '?s=t';
 
-function makeRequest(query, next){
-   request('http://dictionary.reference.com/browse/' + query + '?s=t', function(error, response, body){
-         if(!error && response.statusCode == 200){
-            next(body);
-         }else{
-            console.log(error); //no cb
+function main(word){
+   jsdom.env({
+      url: dictHttpStr + word + dictSearchStr, 
+      src: [jquery],
+      done: function (errors, window) {
+         if(!errors){
+            console.log(getDefn(window));
+         } else {
+            console.log(errors);
          }
+      }
    });
 }
 
-makeRequest(process.argv[2], function(html){
-   jsdom.env(html, [jquery], function(errors, window){
-      console.log(window);
-      console.log(window.jquery('a').length);
-   });
-});
+function getDefn(window){
+   try{
+      return window.$('.dndata').html().replace(/<[^>]*?>/g,'');
+   } catch(err) {
+      return "Error parsing definition";
+   }
+}
+
+function getSyns(window){
+
+}
+
+main(process.argv[2]);
