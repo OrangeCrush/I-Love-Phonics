@@ -1,0 +1,8 @@
+{
+   "name":"I-Love-Phonics",
+   "dependencies":{
+      "request":"latest",
+      "jsdom":"latest",
+      "jquery":"latest"
+   }
+}
