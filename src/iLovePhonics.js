@@ -21,6 +21,7 @@ function main(word){
          }
       }
    });
+
    jsdom.env({
       url: thesHttpStr + word,
       src: [jquery],
@@ -44,7 +45,8 @@ function getDefn(window){
 
 function getSyns(window){
    try {
-      var ary = window.$('.relevancy-list > ul > li > a > .text');
+      //TODO make it only take the first relevancy list
+      var ary = window.$('.relevancy-list:first-child > ul > li > a > .text');
       for(var i =0 ; i < ary.length; i++){
          ary[i] = window.$(ary[i]).html();
       }
@@ -52,7 +54,6 @@ function getSyns(window){
    } catch(err) {
       return 'Error parsing synonymns\n' + err;
    }
-
 }
 
 /*
@@ -61,9 +62,10 @@ function getSyns(window){
 function aryToTextTable(ary){
    var num_cols = Math.floor(Math.sqrt(ary.length));
    var padsize = maxStrLen(ary);
+   ary.sort();
    var rval = '';
-   for(var i = 0; i < ary.length / num_cols; i++){
-      for(var j = 0; j < num_cols; j++){
+   for(var i = 0; i < ary.length; i += num_cols){
+      for(var j = 0; j < num_cols && (i + j) < ary.length; j++){
          rval += ary[i + j] + ' '.repeat(padsize - ary[i + j].length + 1) + ((j + 1) == num_cols ? '\n' : '');
       }
    }
@@ -74,7 +76,6 @@ function aryToTextTable(ary){
  * Needs to be at least 1 element long otherwise [0] fails
  */
 function maxStrLen(aryOfStr){
-   debugger;
    var maxLen = aryOfStr[0].length;
    for(var i = 1; i < aryOfStr.length; i++){
       if(maxLen < aryOfStr[i].length){
