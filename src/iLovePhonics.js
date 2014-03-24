@@ -30,6 +30,9 @@ function main(word){
          if(!errors){
             console.log('\nSynonyms for: "' + word + '":');
             console.log(getSyns(window));
+
+            console.log('\nAntoynms for: "' + word + '":');
+            console.log(getAnts(window));
          } else {
             console.log(errors);
          }
@@ -54,7 +57,22 @@ function getSyns(window){
       }
       return aryToTextTable(ary);
    } catch(err) {
-      return 'Error parsing synonymns\n' + err;
+      return 'Error parsing synonyms\n' + err;
+   }
+}
+
+function getAnts(window){
+   try {
+      var ary = window.$('#synonyms-0 > section.antonyms > .list-holder > .list > li > a');
+      for(var i = 0 ; i < ary.length; i++){
+         
+         //They use js to render the links, so we need to actually
+         //rip the words from the href on their anchor elements with the regex capture ([1])
+         ary[i] = window.$(ary[i]).attr('href').match(/.*\/(.+)$/)[1];
+      }
+      return aryToTextTable(ary);
+   } catch(err) {
+      return 'Error parsing antonyms\n' + err;
    }
 }
 
