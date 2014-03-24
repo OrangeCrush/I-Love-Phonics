@@ -15,6 +15,7 @@ function main(word){
       src: [jquery],
       done: function (errors, window) {
          if(!errors){
+            console.log('\nDefinitions for: "' + word + '":');
             console.log(getDefn(window));
          } else {
             console.log(errors);
@@ -27,6 +28,7 @@ function main(word){
       src: [jquery],
       done: function (errors, window) {
          if(!errors){
+            console.log('\nSynonyms for: "' + word + '":');
             console.log(getSyns(window));
          } else {
             console.log(errors);
@@ -46,8 +48,8 @@ function getDefn(window){
 function getSyns(window){
    try {
       //TODO make it only take the first relevancy list
-      var ary = window.$('.relevancy-list:first-child > ul > li > a > .text');
-      for(var i =0 ; i < ary.length; i++){
+      var ary = window.$('#synonyms-0 > .filters > .relevancy-block > .relevancy-list > ul > li > a > .text');
+      for(var i = 0 ; i < ary.length; i++){
          ary[i] = window.$(ary[i]).html();
       }
       return aryToTextTable(ary);
@@ -90,4 +92,6 @@ String.prototype.repeat = function(num){
 }
 
 //entry point
-main(process.argv[2]);
+for(var i = 2; i < process.argv.length; i++){
+   main(process.argv[i]);
+}
