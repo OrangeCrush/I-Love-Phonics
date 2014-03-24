@@ -50,9 +50,10 @@ function getDefn(window){
 
 function getSyns(window){
    try {
-      //TODO make it only take the first relevancy list
       var ary = window.$('#synonyms-0 > .filters > .relevancy-block > .relevancy-list > ul > li > a > .text');
       for(var i = 0 ; i < ary.length; i++){
+
+         //.text ends up being just a span
          ary[i] = window.$(ary[i]).html();
       }
       return aryToTextTable(ary);
@@ -77,7 +78,7 @@ function getAnts(window){
 }
 
 /*
- * turns an array of strings into a cute little text table
+ * Turns an array of strings into a cute little text table
  */
 function aryToTextTable(ary){
    var num_cols = Math.floor(Math.sqrt(ary.length));
