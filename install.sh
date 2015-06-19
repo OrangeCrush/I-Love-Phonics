@@ -1,2 +1,2 @@
-cp  src/iLovePhonics.py /usr/bin/iLovePhonics
-chmod +x /usr/bin/iLovePhonics
+cp  src/iLovePhonics.js /usr/bin/iLovePhonics
+chmod 555 /usr/bin/iLovePhonics
